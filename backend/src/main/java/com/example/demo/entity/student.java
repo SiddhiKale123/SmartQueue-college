@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "students")
-public class student {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +25,10 @@ public class student {
 
     private Integer year;
 
-    public student() {
+    public Student() {
     }
 
-    public student(String name, String email, String phone,
+    public Student(String name, String email, String phone,
                    String department, Integer year) {
         this.name = name;
         this.email = email;
