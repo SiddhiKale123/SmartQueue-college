@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.QueueStatusResponse;
 import com.example.demo.entity.Queue;
 import com.example.demo.repository.QueueRepository;
 
@@ -37,6 +38,54 @@ public class QueueManagementService {
         return queueRepository.findById(id).orElse(null);
     }
 
+    // Get complete queue status
+    public QueueStatusResponse getQueueStatus(Long id) {
+
+        Queue queue = queueRepository.findById(id).orElse(null);
+
+        if (queue == null) {
+            return null;
+        }
+
+        int position = getQueuePosition(id);
+
+        return new QueueStatusResponse(
+                queue.getTokenNumber(),
+                queue.getStudentName(),
+                queue.getServiceName(),
+                queue.getStatus(),
+                position
+        );
+    }
+
+    // Get position of a student in the queue
+    public int getQueuePosition(Long id) {
+
+        Queue selectedQueue = queueRepository.findById(id).orElse(null);
+
+        if (selectedQueue == null) {
+            return -1;
+        }
+
+        List<Queue> queueList = queueRepository.findAll();
+
+        int position = 0;
+
+        for (Queue queue : queueList) {
+
+            if ("WAITING".equals(queue.getStatus())) {
+
+                position++;
+
+                if (queue.getId().equals(id)) {
+                    return position;
+                }
+            }
+        }
+
+        return 0;
+    }
+
     // Call the next student
     public Queue callNextStudent() {
 
@@ -61,6 +110,7 @@ public class QueueManagementService {
         Queue queue = queueRepository.findById(id).orElse(null);
 
         if (queue != null) {
+
             queue.setStatus("COMPLETED");
 
             return queueRepository.save(queue);

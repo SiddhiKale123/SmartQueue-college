@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.QueueStatusResponse;
 import com.example.demo.entity.Queue;
 import com.example.demo.service.QueueManagementService;
 
@@ -43,6 +44,21 @@ public class QueueController {
         return ResponseEntity.notFound().build();
     }
 
+    // Get complete queue status
+    @GetMapping("/{id}/status")
+    public ResponseEntity<QueueStatusResponse> getQueueStatus(
+            @PathVariable Long id) {
+
+        QueueStatusResponse response =
+                queueManagementService.getQueueStatus(id);
+
+        if (response != null) {
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
     // Call the next student
     @PostMapping("/call-next")
     public ResponseEntity<Queue> callNextStudent() {
@@ -58,14 +74,31 @@ public class QueueController {
 
     // Complete a queue service
     @PutMapping("/{id}/complete")
-    public ResponseEntity<Queue> completeQueueEntry(@PathVariable Long id) {
+    public ResponseEntity<Queue> completeQueueEntry(
+            @PathVariable Long id) {
 
-        Queue queue = queueManagementService.completeQueueEntry(id);
+        Queue queue =
+                queueManagementService.completeQueueEntry(id);
 
         if (queue != null) {
             return ResponseEntity.ok(queue);
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    // Get student queue position
+    @GetMapping("/{id}/position")
+    public ResponseEntity<Integer> getQueuePosition(
+            @PathVariable Long id) {
+
+        int position =
+                queueManagementService.getQueuePosition(id);
+
+        if (position == -1) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(position);
     }
 }
